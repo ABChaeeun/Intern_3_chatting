@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+  <!--  CSS -->
+  {%- block cssfiles -%}
+  <link rel="stylesheet" href="../static/css/loginSuccess.css">
+  {%- endblock cssfiles -%}
+
+  <!--  JS -->
+  {%- block jsfiles -%}
+  <script type="text/javascript" src="../static/js/loginSuccess.js"></script>
+  {%- endblock jsfiles -%}
+
+
+  <!--  BODY-->
+  {%- block body_contents -%}
+  <div class = "loginSuccess">
+    <span>로그인 성공</span>
+  </div>
+
+  <div class="chatting">
+    <h2>WebSocket Test</h2>
+    <ul id = "output"></ul>
+    <span id="login_id">{{login_id}}</span>
+    <input type="text" id="myMessage">
+    <button id="sendbutton">Send</button>
+  </div>
+
+  {%- endblock body_contents -%}

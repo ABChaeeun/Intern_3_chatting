@@ -1,0 +1,40 @@
+{%- extends 'base.html' %}
+
+  <!--  CSS -->
+  {%- block cssfiles -%}
+    <link rel="stylesheet" href="../static/css/login.css">
+  {%- endblock cssfiles -%}
+
+
+  <!--  JS -->
+  {%- block jsfiles -%}
+  <script type="text/javascript" src="../static/js/login.js"></script>
+  {%- endblock jsfiles -%}
+
+
+
+
+  <!--  BODY-->
+  {%- block body_contents -%}
+<!--  <div>login.html</div>-->
+  <div class = "login">
+<!--    <img src = "../static/img/softonnet.png" />-->
+
+    <p class = "id">
+      <i class="fa-solid fa-user"></i>
+      <input id="id" type="text">
+    </p>
+
+    <p class = "pw">
+      <i class="fa-solid fa-key"></i>
+      <input id="passwd" type="password"/>
+    </p>
+
+    <p class = "button">
+    <!--    <button onclick="onClickLogin()">로그인</button>-->
+      <button id="loginButton">로그인</button>
+    </p>
+
+  </div>
+
+  {%- endblock body_contents -%}
