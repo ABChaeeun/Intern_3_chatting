@@ -21,7 +21,7 @@ def loginSuccess():
 
 
 import database
-database_params = {
+database_params = { # DB 연결
 	'host': 'localhost',
   'user': 'eun',
   'password': 'softonnet',
@@ -31,6 +31,7 @@ database_params = {
 }
 db = database.Database.from_config(database_params)
 
+# iidd = 'id'
 @app.route('/webapi/idpw', methods=['POST'])
 def idpw():
   # id = request.form.get('id')
@@ -44,7 +45,9 @@ def idpw():
   parser.add_argument('id', required=True)  # sessionKey
   parser.add_argument('pw', required=True)  # sessionKey
   args = parser.parse_args()
-  print(args['id'], args['pw'])
+  # iidd = args['id']
+  print('id: ',args['id'],'pw: ',args['pw'])
+
 
 
   sql = 'SELECT * ' \
@@ -61,6 +64,22 @@ def idpw():
     return jsonify(status='fail', reason='login.fail')
 
 
+@app.route('/webapi/text', methods=['POST'])
+def text():
+  reqparse.RequestParser()
+  parser = reqparse.RequestParser()
+  parser.add_argument('loginId', required=True)  # sessionKey
+  parser.add_argument('text', required=True)  # sessionKey
+  args = parser.parse_args()
+  print('loginId: ', args['loginId'], 'text: ', args['text'])
+  if args['text']:
+    for keyy, value in ws_list.items():
+      ws_list[keyy].send('['+session['login_id']+'] '+args['text']) # websocket 열려있으니 그냥 .send() 하면 됨 !
+      ws_list[keyy].send('['+args['loginId']+'] '+args['text']) # websocket 열려있으니 그냥 .send() 하면 됨 !
+
+
+
+###########################################################################
 
 sockets = Sockets(app)
 ws_list = dict()
@@ -83,12 +102,35 @@ def chatchat(ws):
             for keyy, value in ws_list.items():
                 ws_list[keyy].send(message)
 
+
+            sql2 = 'SELECT start_time ' \
+                   'FROM analyze_server'
+            sql3 = 'SELECT address ' \
+                   'FROM analyze_server'
+
+            dbcon = db.connection()
+            a = dbcon.execute(sql3)  # execute()가 return하는 값이 있으므로 그걸 받아와서 a로 넘겨주기!
+            account = a.fetchall()
+            print(account)
+            ws_list[keyy].send(account)
+
+
+            # account.send(message)
+            # print(iidd)
+            # iidd.send(message)
+
+
     # delete websocket by key
     print('del keyy {}'.format(args.keyy))
     del ws_list[args.keyy]
 
     for keyy, _ in ws_list.items():
         print('exist keyy {}'.format(keyy))
+
+
+
+
+
 
 
 
@@ -99,6 +141,6 @@ if __name__ == "__main__":
   monkey.patch_all(select=False, thread=False)
   server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
   server.serve_forever()
-  # app.run(host="0.0.0.0") # http://0.0.0.0:5000/
+  # app.run() # http://0.0.0.0:5000/
 
 
