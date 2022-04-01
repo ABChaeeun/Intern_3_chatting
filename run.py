@@ -16,6 +16,32 @@ def loginSuccess():
   data = {
     'login_id': session.get('login_id')
   }
+  # sql_join = 'SELECT login_id, text ' \
+  #            'FROM users A ' \
+  #            'INNER JOIN message B ' \
+  #            'ON A.login_id = B.userID;'
+  #
+  # dbcon = db.connection()
+  # a = dbcon.execute(sql_join)  # execute()가 return하는 값이 있으므로 그걸 받아와서 a로 넘겨주기!
+  # account = a.fetchall()
+  # if account:
+  #   for i in account:
+  #     data22='['+i[0]+'] '+i[1];
+  #     return render_template("loginSuccess.html", **data, data2=data22)
+  #     # ws_list[keyy].send('['+i[0]+'] '+i[1])
+  #     # print('['+i[0]+'] '+i[1]) # websocket 열려있으니 그냥 .send() 하면 됨 !
+  #
+  # # data22 = []
+  # #
+  # # if account:
+  # #   for i in account:
+  # #     data22 = '[' + i[0] + '] ' + i[1];
+  # #   return render_template("loginSuccess.html", **data, data2=data22)
+  # #   # ws_list[keyy].send('['+i[0]+'] '+i[1])
+  # #   # print('['+i[0]+'] '+i[1]) # websocket 열려있으니 그냥 .send() 하면 됨 !
+  # #
+  # # return render_template("loginSuccess.html", **data)
+
   return render_template("loginSuccess.html", **data)
 
 
@@ -31,7 +57,7 @@ database_params = { # DB 연결
 }
 db = database.Database.from_config(database_params)
 
-# iidd = 'id'
+# 로그인 API
 @app.route('/webapi/idpw', methods=['POST'])
 def idpw():
   # id = request.form.get('id')
@@ -64,6 +90,37 @@ def idpw():
     return jsonify(status='fail', reason='login.fail')
 
 
+# 대화내용 API
+@app.route('/webapi/textDB', methods=['GET']) # GET 맞나?
+def textDB():
+  sql_join = 'SELECT login_id, text ' \
+             'FROM users A ' \
+             'INNER JOIN message B ' \
+             'ON A.login_id = B.userID;'
+
+  dbcon = db.connection()
+  a = dbcon.execute(sql_join)  # execute()가 return하는 값이 있으므로 그걸 받아와서 a로 넘겨주기!
+  account = a.fetchall()
+  if account:
+    for i in account:
+      return '[' + i[0] + '] ' + i[1];
+      # ws_list[keyy].send('['+i[0]+'] '+i[1])
+      # print('['+i[0]+'] '+i[1]) # websocket 열려있으니 그냥 .send() 하면 됨 !
+
+  # data22 = []
+  #
+  # if account:
+  #   for i in account:
+  #     data22 = '[' + i[0] + '] ' + i[1];
+  #   return render_template("loginSuccess.html", **data, data2=data22)
+  #   # ws_list[keyy].send('['+i[0]+'] '+i[1])
+  #   # print('['+i[0]+'] '+i[1]) # websocket 열려있으니 그냥 .send() 하면 됨 !
+  #
+  # return render_template("loginSuccess.html", **data)
+
+
+
+# 대화내용 (실시간 웹소켓) API
 @app.route('/webapi/text', methods=['POST'])
 def text():
   reqparse.RequestParser()
@@ -75,8 +132,21 @@ def text():
   if args['text']:
     for keyy, value in ws_list.items():
       ws_list[keyy].send('['+session['login_id']+'] '+args['text']) # websocket 열려있으니 그냥 .send() 하면 됨 !
-      ws_list[keyy].send('['+args['loginId']+'] '+args['text']) # websocket 열려있으니 그냥 .send() 하면 됨 !
+      # ws_list[keyy].send('['+args['loginId']+'] '+args['text']) # websocket 열려있으니 그냥 .send() 하면 됨 !
 
+
+  # sql_join = 'SELECT login_id, text ' \
+  #       'FROM users A ' \
+  #       'INNER JOIN message B ' \
+  #       'ON A.login_id = B.userID;'
+  #
+  # dbcon = db.connection()
+  # a = dbcon.execute(sql_join)  # execute()가 return하는 값이 있으므로 그걸 받아와서 a로 넘겨주기!
+  # account = a.fetchall()
+  # if account:
+  #   for i in account:
+  #     # ws_list[keyy].send('['+i[0]+'] '+i[1])
+  #     # print('['+i[0]+'] '+i[1]) # websocket 열려있으니 그냥 .send() 하면 됨 !
 
 
 ###########################################################################
